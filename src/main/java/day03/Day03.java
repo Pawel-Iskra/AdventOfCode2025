@@ -45,15 +45,15 @@ public class Day03 {
             String left = currentLine.substring(0, currentLine.length() - 11);
             int firstDigit = findHighestDigit(left);
             strb.append(firstDigit);
-            String restOfInput = currentLine.substring(currentLine.indexOf(firstDigit + 48) + 1);
+            String restOfCurrentLine = currentLine.substring(currentLine.indexOf(firstDigit + 48) + 1);
             for (int j = 10; j >= 0; j--) {
-                if (restOfInput.length() <= j) {
-                    strb.append(restOfInput);
+                if (restOfCurrentLine.length() <= j) {
+                    strb.append(restOfCurrentLine);
                     break;
                 }
-                int nextDigit = findHighestDigit(restOfInput.substring(0, restOfInput.length() - j));
+                int nextDigit = findHighestDigit(restOfCurrentLine.substring(0, restOfCurrentLine.length() - j));
                 strb.append(nextDigit);
-                restOfInput = restOfInput.substring(restOfInput.indexOf(nextDigit + 48) + 1);
+                restOfCurrentLine = restOfCurrentLine.substring(restOfCurrentLine.indexOf(nextDigit + 48) + 1);
             }
             sumOfVoltage += Long.parseLong(strb.toString());
         }
