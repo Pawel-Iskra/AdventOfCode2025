@@ -47,27 +47,24 @@ public class Day05 {
         }
     }
 
-
-    public static void partOne() {
-        System.out.println("PART I :");
-        int counter = 0;
-        for (Long currentId : INGREDIENTS_IDS) {
-            for (IdRange currentRange : ID_RANGES) {
-                long currentStart = currentRange.getStart();
-                long currentEnd = currentRange.getEnd();
-                if (currentId < currentStart) break;
-                if (currentId <= currentEnd) {
-                    counter++;
-                    break;
-                }
+    private static void prepareData(List<String> input) {
+        for (String currentLine : input) {
+            if (currentLine.isBlank()) continue;
+            if (currentLine.contains("-")) {
+                String[] idsRange = currentLine.split("-");
+                long start = Long.parseLong(idsRange[0]);
+                long end = Long.parseLong(idsRange[1]);
+                ID_RANGES.add(new IdRange(start, end));
+            } else {
+                INGREDIENTS_IDS.add(Long.parseLong(currentLine.strip()));
             }
         }
-        System.out.println("counter = " + counter);
+        Collections.sort(ID_RANGES);
+//        System.out.println("ID_RANGES = " + ID_RANGES);
     }
 
     public static void partTwo() {
         System.out.println("\nPART II:");
-
         long previousStart = ID_RANGES.get(0).getStart();
         long previousEnd = ID_RANGES.get(0).getEnd();
         long counter = 0;
@@ -87,20 +84,21 @@ public class Day05 {
         System.out.println("counter = " + counter);
     }
 
-    private static void prepareData(List<String> input) {
-        for (String currentLine : input) {
-            if (currentLine.isBlank()) continue;
-            if (currentLine.contains("-")) {
-                String[] idsRange = currentLine.split("-");
-                long start = Long.parseLong(idsRange[0]);
-                long end = Long.parseLong(idsRange[1]);
-                ID_RANGES.add(new IdRange(start, end));
-            } else {
-                INGREDIENTS_IDS.add(Long.parseLong(currentLine.strip()));
+    public static void partOne() {
+        System.out.println("PART I :");
+        int counter = 0;
+        for (Long currentId : INGREDIENTS_IDS) {
+            for (IdRange currentRange : ID_RANGES) {
+                long currentStart = currentRange.getStart();
+                long currentEnd = currentRange.getEnd();
+                if (currentId < currentStart) break;
+                if (currentId <= currentEnd) {
+                    counter++;
+                    break;
+                }
             }
         }
-        Collections.sort(ID_RANGES);
-        System.out.println("ID_RANGES = " + ID_RANGES);
+        System.out.println("counter = " + counter);
     }
 
 

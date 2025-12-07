@@ -19,24 +19,21 @@ public class Day07 {
     private static int START_COL;
 
 
-    public static void partOne() {
-        System.out.println("PART I:");
-        int counter = 0;
-        DIAGRAM[START_ROW + 1][START_COL] = BEAM; // step 1
-        for (int i = START_ROW + 2; i < ROWS; i++) {
+    private static void prepareData(List<String> input) {
+        ROWS = input.size();
+        COLS = input.get(0).length();
+        DIAGRAM = new char[ROWS][COLS];
+        VALUES = new long[ROWS][COLS];
+        for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
-                if (DIAGRAM[i - 1][j] == BEAM) {
-                    if (DIAGRAM[i][j] == SPLITTER) {
-                        DIAGRAM[i][j - 1] = BEAM;
-                        DIAGRAM[i][j + 1] = BEAM;
-                        counter++;
-                    } else {
-                        DIAGRAM[i][j] = BEAM;
-                    }
+                DIAGRAM[i][j] = input.get(i).charAt(j);
+                if (input.get(i).charAt(j) == START_S) {
+                    START_ROW = i;
+                    START_COL = j;
+                    break;
                 }
             }
         }
-        System.out.println("counter = " + counter);
     }
 
     public static void partTwo() {
@@ -58,21 +55,24 @@ public class Day07 {
         System.out.println("sum = " + sum);
     }
 
-    private static void prepareData(List<String> input) {
-        ROWS = input.size();
-        COLS = input.get(0).length();
-        DIAGRAM = new char[ROWS][COLS];
-        VALUES = new long[ROWS][COLS];
-        for (int i = 0; i < ROWS; i++) {
+    public static void partOne() {
+        System.out.println("PART I:");
+        int counter = 0;
+        DIAGRAM[START_ROW + 1][START_COL] = BEAM; // step 1
+        for (int i = START_ROW + 2; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
-                DIAGRAM[i][j] = input.get(i).charAt(j);
-                if (input.get(i).charAt(j) == START_S) {
-                    START_ROW = i;
-                    START_COL = j;
-                    break;
+                if (DIAGRAM[i - 1][j] == BEAM) {
+                    if (DIAGRAM[i][j] == SPLITTER) {
+                        DIAGRAM[i][j - 1] = BEAM;
+                        DIAGRAM[i][j + 1] = BEAM;
+                        counter++;
+                    } else {
+                        DIAGRAM[i][j] = BEAM;
+                    }
                 }
             }
         }
+        System.out.println("counter = " + counter);
     }
 
     public static void main(String[] args) {

@@ -16,27 +16,6 @@ public class Day03 {
                 .get(input.length() - 1);
     }
 
-    public static void partOne(List<String> input) {
-        System.out.println("PART I:");
-        int sumOfVoltage = 0;
-        for (String currentLine : input) {
-            int length = currentLine.length();
-            int maxVoltage = 0;
-            for (int j = 0; j < length - 1; j++) {
-                for (int k = j + 1; k < length; k++) {
-                    StringBuilder strb = new StringBuilder();
-                    int currentVoltage = Integer.parseInt(strb
-                            .append(currentLine.charAt(j))
-                            .append(currentLine.charAt(k))
-                            .toString());
-                    if (currentVoltage > maxVoltage) maxVoltage = currentVoltage;
-                }
-            }
-            sumOfVoltage += maxVoltage;
-        }
-        System.out.println("sumOfVoltage = " + sumOfVoltage);
-    }
-
     public static void partTwo(List<String> input) {
         System.out.println("\nPART II:");
         long sumOfVoltage = 0L;
@@ -56,6 +35,27 @@ public class Day03 {
                 restOfCurrentLine = restOfCurrentLine.substring(restOfCurrentLine.indexOf(nextDigit + 48) + 1);
             }
             sumOfVoltage += Long.parseLong(strb.toString());
+        }
+        System.out.println("sumOfVoltage = " + sumOfVoltage);
+    }
+
+    public static void partOne(List<String> input) {
+        System.out.println("PART I:");
+        int sumOfVoltage = 0;
+        for (String currentLine : input) {
+            int length = currentLine.length();
+            int maxVoltage = 0;
+            for (int j = 0; j < length - 1; j++) {
+                for (int k = j + 1; k < length; k++) {
+                    StringBuilder strb = new StringBuilder();
+                    int currentVoltage = Integer.parseInt(strb
+                            .append(currentLine.charAt(j))
+                            .append(currentLine.charAt(k))
+                            .toString());
+                    if (currentVoltage > maxVoltage) maxVoltage = currentVoltage;
+                }
+            }
+            sumOfVoltage += maxVoltage;
         }
         System.out.println("sumOfVoltage = " + sumOfVoltage);
     }
