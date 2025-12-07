@@ -56,7 +56,6 @@ public class Day06 {
         ROWS = input.size();
         NUMBERS_IN_ONE_ROW = input.get(0).strip().split(ANY_BLANK_PATTERN).length;
         NUMBERS = new int[ROWS][NUMBERS_IN_ONE_ROW];
-        OPERATORS = input.get(ROWS - 1).strip().split(ANY_BLANK_PATTERN);
         for (int i = 0; i < ROWS - 1; i++) {
             String[] currentLine = input.get(i).strip().split(ANY_BLANK_PATTERN);
             for (int j = 0; j < currentLine.length; j++) {
@@ -70,6 +69,7 @@ public class Day06 {
                 WORKSHEET[i][j] = input.get(i).charAt(j);
             }
         }
+        OPERATORS = input.get(ROWS - 1).strip().split(ANY_BLANK_PATTERN);
     }
 
     public static void partTwo() {
