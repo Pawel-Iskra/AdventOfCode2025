@@ -91,7 +91,7 @@ public class Day04 {
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         String pathToInputFile = "src/main/resources/day04.txt";
         List<String> inputLines = MyUtils.getInputLines(pathToInputFile);
 
