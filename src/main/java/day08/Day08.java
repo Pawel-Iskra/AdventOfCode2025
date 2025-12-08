@@ -10,7 +10,7 @@ public class Day08 {
     private static final double EPSILON = 1e-9;
     private static final int CONNECTIONS = 10;
 
-    private static final List<Coordinates> LIST_OF_BOXES_COORDINATES = new ArrayList<>();
+    private static List<Coordinates> LIST_OF_BOXES_COORDINATES;
     private static int NUMBER_OF_BOXES;
     private static Graph BOXES_AS_GRAPH;
 
@@ -178,6 +178,7 @@ public class Day08 {
 
 
     private static void prepareData(List<String> input) {
+        LIST_OF_BOXES_COORDINATES = new ArrayList<>();
         for (String currentLine : input) {
             String[] coordinates = currentLine.split(",");
             LIST_OF_BOXES_COORDINATES.add(new Coordinates(

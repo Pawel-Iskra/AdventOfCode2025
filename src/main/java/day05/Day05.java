@@ -8,8 +8,8 @@ import java.util.List;
 
 public class Day05 {
 
-    private static List<IdRange> ID_RANGES = new ArrayList<>();
-    private static List<Long> INGREDIENTS_IDS = new ArrayList<>();
+    private static List<IdRange> ID_RANGES;
+    private static List<Long> INGREDIENTS_IDS;
 
 
     static class IdRange implements Comparable<IdRange> {
@@ -48,6 +48,8 @@ public class Day05 {
     }
 
     private static void prepareData(List<String> input) {
+        ID_RANGES = new ArrayList<>();
+        INGREDIENTS_IDS = new ArrayList<>();
         for (String currentLine : input) {
             if (currentLine.isBlank()) continue;
             if (currentLine.contains("-")) {
