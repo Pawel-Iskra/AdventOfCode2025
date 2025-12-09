@@ -116,7 +116,7 @@ public class Day09 {
         for (int i = 0; i < NUMBER_OF_RED_TILES - 1; i++) {
             int firstRow = RED_TILE_COORD_ROW_LIST.get(i);
             int firstCol = RED_TILE_COORD_COL_LIST.get(i);
-            for (int j = i + 1; j < NUMBER_OF_RED_TILES - 1; j++) {
+            for (int j = i + 1; j < NUMBER_OF_RED_TILES; j++) {
                 int secondRow = RED_TILE_COORD_ROW_LIST.get(j);
                 int secondCol = RED_TILE_COORD_COL_LIST.get(j);
                 long currentArea = (long) (Math.abs(firstRow - secondRow) + 1) * (Math.abs(firstCol - secondCol) + 1);
