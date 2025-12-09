@@ -25,15 +25,15 @@ public class Day09 {
         for (int i = rowStart; i <= rowEnd; i++) {
             if (ROWS_SPAN_MAP.containsKey(i)) {
                 Span currentSpan = ROWS_SPAN_MAP.get(i);
-                if (colEnd > currentSpan.max) return false;
-                if (colStart < currentSpan.min) return false;
+                if (colEnd > currentSpan.max()) return false;
+                if (colStart < currentSpan.min()) return false;
             }
         }
         for (int i = colStart; i <= colEnd; i++) {
             if (COLS_SPAN_MAP.containsKey(i)) {
                 Span currentSpan = COLS_SPAN_MAP.get(i);
-                if (rowEnd > currentSpan.max) return false;
-                if (rowStart < currentSpan.min) return false;
+                if (rowEnd > currentSpan.max()) return false;
+                if (rowStart < currentSpan.min()) return false;
             }
         }
         return true;

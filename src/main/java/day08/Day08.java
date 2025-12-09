@@ -14,7 +14,8 @@ public class Day08 {
     private static int NUMBER_OF_BOXES;
     private static Graph BOXES_AS_GRAPH;
 
-    record Coordinates(int x, int y, int z) {}
+    record Coordinates(int x, int y, int z) {
+    }
 
 
     static class Graph {
@@ -159,9 +160,9 @@ public class Day08 {
             Coordinates startCoords = LIST_OF_BOXES_COORDINATES.get(i);
             for (int j = i + 1; j < NUMBER_OF_BOXES; j++) {
                 Coordinates endCoords = LIST_OF_BOXES_COORDINATES.get(j);
-                double distance = Math.sqrt(Math.pow(startCoords.x - endCoords.x, 2) +
-                        Math.pow(startCoords.y - endCoords.y, 2) +
-                        Math.pow(startCoords.z - endCoords.z, 2)
+                double distance = Math.sqrt(Math.pow(startCoords.x() - endCoords.x(), 2) +
+                        Math.pow(startCoords.y() - endCoords.y(), 2) +
+                        Math.pow(startCoords.z() - endCoords.z(), 2)
                 );
                 BOXES_AS_GRAPH.addEdge(i, j, distance);
             }
@@ -183,8 +184,8 @@ public class Day08 {
 
             int nodes = boxesCircuitsGraph.getNumberOfNodesPossibleFromNode(edgeWithSmallestDist.get(0).getTo());
             if (nodes == NUMBER_OF_BOXES) {
-                long result = (long) LIST_OF_BOXES_COORDINATES.get((edgeWithSmallestDist.get(0).getTo())).x *
-                        LIST_OF_BOXES_COORDINATES.get((edgeWithSmallestDist.get(0).getFrom())).x;
+                long result = (long) LIST_OF_BOXES_COORDINATES.get((edgeWithSmallestDist.get(0).getTo())).x() *
+                        LIST_OF_BOXES_COORDINATES.get((edgeWithSmallestDist.get(0).getFrom())).x();
                 System.out.println("result = " + result);
                 break;
             }
