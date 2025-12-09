@@ -14,6 +14,8 @@ public class Day08 {
     private static int NUMBER_OF_BOXES;
     private static Graph BOXES_AS_GRAPH;
 
+    record Coordinates(int x, int y, int z) {}
+
 
     static class Graph {
         private List<Integer> nodeList;
@@ -142,41 +144,6 @@ public class Day08 {
         }
     }
 
-
-    static class Coordinates {
-        private int x;
-        private int y;
-        private int z;
-
-        Coordinates(final int x, final int y, final int z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        int getX() {
-            return x;
-        }
-
-        int getY() {
-            return y;
-        }
-
-        int getZ() {
-            return z;
-        }
-
-        @Override
-        public String toString() {
-            return "\nCoordinates{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    ", z=" + z +
-                    '}';
-        }
-    }
-
-
     private static void prepareData(List<String> input) {
         LIST_OF_BOXES_COORDINATES = new ArrayList<>();
         for (String currentLine : input) {
@@ -192,9 +159,9 @@ public class Day08 {
             Coordinates startCoords = LIST_OF_BOXES_COORDINATES.get(i);
             for (int j = i + 1; j < NUMBER_OF_BOXES; j++) {
                 Coordinates endCoords = LIST_OF_BOXES_COORDINATES.get(j);
-                double distance = Math.sqrt(Math.pow(startCoords.getX() - endCoords.getX(), 2) +
-                        Math.pow(startCoords.getY() - endCoords.getY(), 2) +
-                        Math.pow(startCoords.getZ() - endCoords.getZ(), 2)
+                double distance = Math.sqrt(Math.pow(startCoords.x - endCoords.x, 2) +
+                        Math.pow(startCoords.y - endCoords.y, 2) +
+                        Math.pow(startCoords.z - endCoords.z, 2)
                 );
                 BOXES_AS_GRAPH.addEdge(i, j, distance);
             }
@@ -216,8 +183,8 @@ public class Day08 {
 
             int nodes = boxesCircuitsGraph.getNumberOfNodesPossibleFromNode(edgeWithSmallestDist.get(0).getTo());
             if (nodes == NUMBER_OF_BOXES) {
-                long result = (long) LIST_OF_BOXES_COORDINATES.get((edgeWithSmallestDist.get(0).getTo())).getX() *
-                        LIST_OF_BOXES_COORDINATES.get((edgeWithSmallestDist.get(0).getFrom())).getX();
+                long result = (long) LIST_OF_BOXES_COORDINATES.get((edgeWithSmallestDist.get(0).getTo())).x *
+                        LIST_OF_BOXES_COORDINATES.get((edgeWithSmallestDist.get(0).getFrom())).x;
                 System.out.println("result = " + result);
                 break;
             }

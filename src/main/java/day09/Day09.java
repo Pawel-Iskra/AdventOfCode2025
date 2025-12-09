@@ -10,8 +10,8 @@ import java.util.Map;
 public class Day09 {
 
 
-    private static List<Integer> RED_TILE_COORD_ROW;
-    private static List<Integer> RED_TILE_COORD_COL;
+    private static List<Integer> RED_TILE_COORD_ROW_LIST;
+    private static List<Integer> RED_TILE_COORD_COL_LIST;
     private static int NUMBER_OF_RED_TILES;
     private static Map<Integer, Span> ROWS_SPAN_MAP;
     private static Map<Integer, Span> COLS_SPAN_MAP;
@@ -61,32 +61,30 @@ public class Day09 {
     }
 
     private static void prepareData(List<String> input) {
-        RED_TILE_COORD_COL = new ArrayList<>();
-        RED_TILE_COORD_ROW = new ArrayList<>();
+        RED_TILE_COORD_COL_LIST = new ArrayList<>();
+        RED_TILE_COORD_ROW_LIST = new ArrayList<>();
         ROWS_SPAN_MAP = new HashMap<>();
         COLS_SPAN_MAP = new HashMap<>();
         for (String currentLine : input) {
             String[] coords = currentLine.split(",");
             int row = Integer.parseInt(coords[1]);
             int col = Integer.parseInt(coords[0]);
-            RED_TILE_COORD_COL.add(col);
-            RED_TILE_COORD_ROW.add(row);
+            RED_TILE_COORD_COL_LIST.add(col);
+            RED_TILE_COORD_ROW_LIST.add(row);
         }
-        NUMBER_OF_RED_TILES = RED_TILE_COORD_COL.size();
+        NUMBER_OF_RED_TILES = RED_TILE_COORD_COL_LIST.size();
 
         for (int i = 0; i < NUMBER_OF_RED_TILES - 1; i++) {
-            int firstRow = RED_TILE_COORD_ROW.get(i);
-            int firstCol = RED_TILE_COORD_COL.get(i);
-            int secondRow = RED_TILE_COORD_ROW.get(i + 1);
-            int secondCol = RED_TILE_COORD_COL.get(i + 1);
-            addValuesToSpanMaps(
-                    Math.min(firstRow, secondRow), Math.max(firstRow, secondRow),
+            int firstRow = RED_TILE_COORD_ROW_LIST.get(i);
+            int firstCol = RED_TILE_COORD_COL_LIST.get(i);
+            int secondRow = RED_TILE_COORD_ROW_LIST.get(i + 1);
+            int secondCol = RED_TILE_COORD_COL_LIST.get(i + 1);
+            addValuesToSpanMaps(Math.min(firstRow, secondRow), Math.max(firstRow, secondRow),
                     Math.min(firstCol, secondCol), Math.max(firstCol, secondCol));
             if (i == 0) {
-                secondRow = RED_TILE_COORD_ROW.get(NUMBER_OF_RED_TILES - 1);
-                secondCol = RED_TILE_COORD_COL.get(NUMBER_OF_RED_TILES - 1);
-                addValuesToSpanMaps(
-                        Math.min(firstRow, secondRow), Math.max(firstRow, secondRow),
+                secondRow = RED_TILE_COORD_ROW_LIST.get(NUMBER_OF_RED_TILES - 1);
+                secondCol = RED_TILE_COORD_COL_LIST.get(NUMBER_OF_RED_TILES - 1);
+                addValuesToSpanMaps(Math.min(firstRow, secondRow), Math.max(firstRow, secondRow),
                         Math.min(firstCol, secondCol), Math.max(firstCol, secondCol));
             }
         }
@@ -96,11 +94,11 @@ public class Day09 {
         System.out.println("\nPART II:");
         long maxArea = 0;
         for (int i = 0; i < NUMBER_OF_RED_TILES; i++) {
-            int firstRow = RED_TILE_COORD_ROW.get(i);
-            int firstCol = RED_TILE_COORD_COL.get(i);
+            int firstRow = RED_TILE_COORD_ROW_LIST.get(i);
+            int firstCol = RED_TILE_COORD_COL_LIST.get(i);
             for (int j = i + 1; j < NUMBER_OF_RED_TILES - 1; j++) {
-                int secondRow = RED_TILE_COORD_ROW.get(j);
-                int secondCol = RED_TILE_COORD_COL.get(j);
+                int secondRow = RED_TILE_COORD_ROW_LIST.get(j);
+                int secondCol = RED_TILE_COORD_COL_LIST.get(j);
                 if (checkIfRectangleIsInside(
                         Math.min(firstRow, secondRow), Math.max(firstRow, secondRow),
                         Math.min(firstCol, secondCol), Math.max(firstCol, secondCol))) {
@@ -116,11 +114,11 @@ public class Day09 {
         System.out.println("PART I:");
         long maxArea = 0;
         for (int i = 0; i < NUMBER_OF_RED_TILES - 1; i++) {
-            int firstRow = RED_TILE_COORD_ROW.get(i);
-            int firstCol = RED_TILE_COORD_COL.get(i);
+            int firstRow = RED_TILE_COORD_ROW_LIST.get(i);
+            int firstCol = RED_TILE_COORD_COL_LIST.get(i);
             for (int j = i + 1; j < NUMBER_OF_RED_TILES - 1; j++) {
-                int secondRow = RED_TILE_COORD_ROW.get(j);
-                int secondCol = RED_TILE_COORD_COL.get(j);
+                int secondRow = RED_TILE_COORD_ROW_LIST.get(j);
+                int secondCol = RED_TILE_COORD_COL_LIST.get(j);
                 long currentArea = (long) (Math.abs(firstRow - secondRow) + 1) * (Math.abs(firstCol - secondCol) + 1);
                 if (currentArea > maxArea) maxArea = currentArea;
             }
