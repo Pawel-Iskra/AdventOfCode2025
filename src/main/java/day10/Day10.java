@@ -17,12 +17,12 @@ public class Day10 {
     static class Machine {
         private final String lightDiagram;
         private final List<List<Integer>> buttonList;
-        private final String joltageReq;
+        private final List<Integer> joltageConfig;
 
-        public Machine(String lightDiagram, String joltageReq) {
+        public Machine(String lightDiagram, List<Integer> joltageConfig) {
             this.lightDiagram = lightDiagram;
             this.buttonList = new ArrayList<>();
-            this.joltageReq = joltageReq;
+            this.joltageConfig = new ArrayList<>(joltageConfig);
         }
 
         public String getLightDiagram() {
@@ -33,8 +33,8 @@ public class Day10 {
             return buttonList;
         }
 
-        public String getJoltageReq() {
-            return joltageReq;
+        public List<Integer> getJoltageConfig() {
+            return joltageConfig;
         }
 
         public void addButton(List<Integer> button) {
@@ -46,7 +46,7 @@ public class Day10 {
             return "\nMachine{" +
                     "lightDiagram='" + lightDiagram + '\'' +
                     ", buttonList=" + buttonList +
-                    ", joltageReq='" + joltageReq + '\'' +
+                    ", joltageReq='" + joltageConfig + '\'' +
                     '}';
         }
     }
@@ -68,7 +68,7 @@ public class Day10 {
     }
 
 
-    private static int findFewestButtonPresses(String targetDiagram, List<List<Integer>> buttons) {
+    private static int findFewestButtonPressesForLightDiagram(String targetDiagram, List<List<Integer>> buttons) {
         int fewest = Integer.MAX_VALUE;
         int numberOfButtons = buttons.size();
         int[][] buttonCombinations = getAllCombinations(numberOfButtons);
@@ -80,7 +80,7 @@ public class Day10 {
 
             for (int j = 0; j < numberOfButtons; j++) {
                 if (currentCombination[j] == 1) {
-                    pressButton(currentDiagram, buttons.get(j));
+                    pressLightButton(currentDiagram, buttons.get(j));
                     presses++;
                 }
             }
@@ -91,7 +91,7 @@ public class Day10 {
         return fewest;
     }
 
-    private static void pressButton(char[] diagram, List<Integer> button) {
+    private static void pressLightButton(char[] diagram, List<Integer> button) {
         for (int lightNumber : button) {
             if (diagram[lightNumber] == LIGHT_OFF) {
                 diagram[lightNumber] = LIGHT_ON;
@@ -110,13 +110,18 @@ public class Day10 {
 
 
     private static void prepareData(List<String> input) {
-        for (String currentMachine : input) {
-            String lightDiagram = currentMachine.substring(1, currentMachine.indexOf("]"));
-            String joltageReq = currentMachine.substring(
-                    currentMachine.indexOf("{") + 1, currentMachine.indexOf("}"));
-            Machine machine = new Machine(lightDiagram, joltageReq);
-            String[] buttonArray = currentMachine
-                    .substring(currentMachine.indexOf("]") + 1, currentMachine.indexOf("{"))
+        for (String currentMachineData : input) {
+            String lightDiagram = currentMachineData.substring(1, currentMachineData.indexOf("]"));
+            String[] joltageConfigAsArray = currentMachineData
+                    .substring(currentMachineData.indexOf("{") + 1, currentMachineData.indexOf("}"))
+                    .split(",");
+            List<Integer> joltageConfig = Arrays.stream(joltageConfigAsArray)
+                    .map(Integer::parseInt)
+                    .toList();
+            Machine machine = new Machine(lightDiagram, joltageConfig);
+
+            String[] buttonArray = currentMachineData
+                    .substring(currentMachineData.indexOf("]") + 1, currentMachineData.indexOf("{"))
                     .strip()
                     .split(" ");
             List<Integer> button;
@@ -130,7 +135,120 @@ public class Day10 {
             }
             MACHINE_LIST.add(machine);
         }
-//        System.out.println("MACHINE_LIST = " + MACHINE_LIST);
+        System.out.println("MACHINE_LIST = " + MACHINE_LIST);
+    }
+
+    private static boolean checkIfEqual(int[] currentJoltageConfig, List<Integer> targetJoltageConfig) {
+        for (int i = 0; i < targetJoltageConfig.size(); i++) {
+            if (currentJoltageConfig[i] != targetJoltageConfig.get(i)) return false;
+        }
+        return true;
+    }
+
+    private static void pressJoltageButton(int[] currentJoltageConfig, List<Integer> button) {
+        for (int currentButtonPart : button) {
+            currentJoltageConfig[currentButtonPart]++;
+        }
+    }
+
+    private static boolean checkIfAnyJoltageIsOverLimit(int[] currentJoltageConfig, List<Integer> targetJoltageConfig) {
+        for (int i = 0; i < targetJoltageConfig.size(); i++) {
+            if (currentJoltageConfig[i] > targetJoltageConfig.get(i)) return true;
+        }
+        return false;
+    }
+
+    private static boolean checkIfAnyButtonIsOverMax(int[] currentButtonsPress, int[] maxButtonsPress) {
+        for (int i = 0; i < currentButtonsPress.length; i++) {
+            if (currentButtonsPress[i] > maxButtonsPress[i]) return true;
+        }
+        return false;
+    }
+
+    private static int findFewestButtonPressesForJoltageConfig(List<Integer> targetJoltageConfig, List<List<Integer>> buttons) {
+        int fewest = 10_000_000;
+        int size = targetJoltageConfig.size();
+        int[] maxButtonsPress = new int[buttons.size()];
+        int[] currentButtonsPress = new int[buttons.size()];
+
+        for (int i = 0; i < buttons.size(); i++) {
+            List<Integer> currentButton = buttons.get(i);
+            maxButtonsPress[i] = currentButton.stream()
+                    .map(targetJoltageConfig::get)
+                    .min(Integer::compareTo)
+                    .orElse(0);
+        }
+        System.out.println("\ntargetJoltageConfig = " + targetJoltageConfig);
+        System.out.println("buttons = " + buttons);
+        System.out.println("maxButtonsPress = " + Arrays.toString(maxButtonsPress));
+
+
+        int[] currentButtonPressCombination = new int[maxButtonsPress.length];
+        while (true) {
+
+//            System.out.println("currentButtonPressCombination = " + Arrays.toString(currentButtonPressCombination));
+            int presses = 0;
+            int[] currentJoltageConfig = new int[size];
+            boolean exceeded = false;
+            for (int j = 0; j < currentButtonPressCombination.length; j++) {
+                for (int k = 0; k < currentButtonPressCombination[j]; k++) {
+                    pressJoltageButton(currentJoltageConfig, buttons.get(j));
+                }
+                if (checkIfAnyJoltageIsOverLimit(currentJoltageConfig, targetJoltageConfig)) {
+                    exceeded = true;
+                    break;
+                }
+            }
+
+            if (!exceeded && checkIfEqual(currentJoltageConfig, targetJoltageConfig)) {
+                presses = Arrays.stream(currentButtonPressCombination).sum();
+                System.out.println("presses = " + presses);
+                fewest = Math.min(fewest, presses);
+            }
+
+            // counters fpr each button press
+            int index = currentButtonPressCombination.length - 1;
+            while (index >= 0) {
+                if (currentButtonPressCombination[index] < maxButtonsPress[index]) {
+                    currentButtonPressCombination[index]++;
+                    break;
+                }
+                currentButtonPressCombination[index] = 0;
+                index--;
+            }
+            if (index < 0) {
+                break;
+            }
+        }
+        return fewest;
+    }
+
+    /*
+        FEWEST:
+        0-> 49
+        1-> 60
+        2-> 40
+        3 ->
+    */
+
+
+    private static List<int[]> generateAllCombinations(int[] maxValues) {
+        List<int[]> result = new ArrayList<>();
+        result.add(new int[maxValues.length]);
+
+        for (int i = 0; i < maxValues.length; i++) {
+            List<int[]> newResult = new ArrayList<>();
+
+            for (int[] combination : result) {
+                for (int value = 0; value <= maxValues[i]; value++) {
+                    int[] newCombination = combination.clone();
+                    newCombination[i] = value;
+                    newResult.add(newCombination);
+                }
+            }
+            result = newResult;
+        }
+        return result;
     }
 
     static void partOne() {
@@ -140,16 +258,26 @@ public class Day10 {
         for (Machine machine : MACHINE_LIST) {
             String diagramToAchieve = machine.getLightDiagram();
             List<List<Integer>> buttons = machine.getButtonList();
-            int presses = findFewestButtonPresses(diagramToAchieve, buttons);
+            int presses = findFewestButtonPressesForLightDiagram(diagramToAchieve, buttons);
             fewestPressSum += presses;
         }
         System.out.println("fewestPressSum = " + fewestPressSum);
     }
 
+
     static void partTwo() {
         System.out.println("\nPART II:");
-
-
+        int fewestPressSum = 0;
+        int index = 0;
+        for (Machine machine : MACHINE_LIST) {
+            List<Integer> joltageConfig = machine.getJoltageConfig();
+            List<List<Integer>> buttons = machine.getButtonList();
+            int presses = findFewestButtonPressesForJoltageConfig(joltageConfig, buttons);
+            System.out.println(index + " -> presses = " + presses);
+            fewestPressSum += presses;
+            index++;
+        }
+        System.out.println("fewestPressSum = " + fewestPressSum);
     }
 
     static void main() {
