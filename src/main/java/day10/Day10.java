@@ -57,13 +57,13 @@ public class Day10 {
 
         for (int i = 0; i < combinations; i++) {
             int value = i;
-
             for (int j = size - 1; j >= 0; j--) {
                 result[i][j] = value % 2;
                 value /= 2;
             }
         }
-
+        // hehe - each row is now binary representation of numbers from 0 to 2^size
+        // which means the result is all possible 0/1 combinations in the given size
         return result;
     }
 
@@ -92,8 +92,7 @@ public class Day10 {
     }
 
     private static void pressButton(char[] diagram, List<Integer> button) {
-        for (int i = 0; i < button.size(); i++) {
-            int lightNumber = button.get(i);
+        for (int lightNumber : button) {
             if (diagram[lightNumber] == LIGHT_OFF) {
                 diagram[lightNumber] = LIGHT_ON;
             } else {
@@ -120,7 +119,7 @@ public class Day10 {
                     .substring(currentMachine.indexOf("]") + 1, currentMachine.indexOf("{"))
                     .strip()
                     .split(" ");
-            List<Integer> button = new ArrayList<>();
+            List<Integer> button;
             for (String currentButton : buttonArray) {
                 String[] buttonAsArray = currentButton.split(",");
                 button = new ArrayList<>();
@@ -136,27 +135,24 @@ public class Day10 {
 
     static void partOne() {
         System.out.println("PART I:");
-        int size = MACHINE_LIST.size();
         int fewestPressSum = 0;
-
 
         for (Machine machine : MACHINE_LIST) {
             String diagramToAchieve = machine.getLightDiagram();
             List<List<Integer>> buttons = machine.getButtonList();
             int presses = findFewestButtonPresses(diagramToAchieve, buttons);
             fewestPressSum += presses;
-//            System.out.println("presses = " + presses);
         }
         System.out.println("fewestPressSum = " + fewestPressSum);
-
     }
 
     static void partTwo() {
         System.out.println("\nPART II:");
 
+
     }
 
-    public static void main(String[] args) {
+    static void main() {
         String pathToInputFile = "src/main/resources/day10.txt";
         List<String> inputLines = MyUtils.getInputLines(pathToInputFile);
 
