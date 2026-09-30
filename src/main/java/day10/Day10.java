@@ -3,8 +3,8 @@ package day10;
 import utils.MyUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class Day10 {
 
@@ -51,71 +51,48 @@ public class Day10 {
         }
     }
 
+    static List<List<Integer>> getAllCombinations(int size) {
+        List<List<Integer>> result = new ArrayList<>();
+        result.add(new ArrayList<>());
 
-    private static void prepareData(List<String> input) {
-        for (String currentMachine : input) {
-            String lightDiagram = currentMachine.substring(1, currentMachine.indexOf("]"));
-            String joltageReq = currentMachine.substring(
-                    currentMachine.indexOf("{") + 1, currentMachine.indexOf("}"));
-            Machine machine = new Machine(lightDiagram, joltageReq);
-            String[] buttonArray = currentMachine.substring(
-                            currentMachine.indexOf("]") + 1, currentMachine.indexOf("{"))
-                    .strip()
-                    .split(" ");
-            List<Integer> button = new ArrayList<>();
-            for (String currentButton : buttonArray) {
-                String[] buttonAsArray = currentButton.split(",");
-                button = new ArrayList<>();
-                for (String buttonInt : buttonAsArray) {
-                    button.add(Integer.parseInt(buttonInt.strip().replaceAll("[^0-9]", "")));
-                }
-                machine.addButton(button);
+        for (int i = 0; i < size; i++) {
+            List<List<Integer>> newCombinations = new ArrayList<>();
+
+            for (List<Integer> combination : result) {
+                List<Integer> zero = new ArrayList<>(combination);
+                zero.add(0);
+                newCombinations.add(zero);
+
+                List<Integer> one = new ArrayList<>(combination);
+                one.add(1);
+                newCombinations.add(one);
             }
-            MACHINE_LIST.add(machine);
+
+            result = newCombinations;
         }
-        System.out.println("MACHINE_LIST = " + MACHINE_LIST);
+        return result;
     }
 
-    static void partTwo() {
-        System.out.println("\nPART II:");
 
-    }
-
-    static void partOne() {
-        System.out.println("PART I:");
-        int size = MACHINE_LIST.size();
-        int fewestPressSum = 0;
-
-
-        for (Machine machine : MACHINE_LIST) {
-            String diagramToAchieve = machine.getLightDiagram();
-            List<List<Integer>> buttons = machine.getButtonList();
-            int presses = findFewestButtonPresses(diagramToAchieve, buttons);
-            fewestPressSum += presses;
-//            System.out.println("presses = " + presses);
-        }
-        System.out.println("fewestPressSum = " + fewestPressSum);
-
-    }
-
-    private static int findFewestButtonPresses(String diagramToAchieve, List<List<Integer>> buttons) {
+    private static int findFewestButtonPresses(String targetDiagram, List<List<Integer>> buttons) {
         int fewest = Integer.MAX_VALUE;
         int numberOfButtons = buttons.size();
+        List<List<Integer>> buttonCombinations = getAllCombinations(numberOfButtons);
 
-        for (int i = 0; i < 10000; i++) {
-            char[] currentDiagram = new char[diagramToAchieve.length()];
-            for (int j = 0; j < diagramToAchieve.length(); j++) {
-                currentDiagram[j] = LIGHT_OFF;
-            } // indicator lights are all initially off
-
+        for (List<Integer> currentCombination : buttonCombinations) {
+            char[] currentDiagram = new char[targetDiagram.length()];
+            Arrays.fill(currentDiagram, LIGHT_OFF); // indicator lights are all initially off
             int presses = 0;
-            while (!checkIfEqual(diagramToAchieve, currentDiagram)) {
-                Random random = new Random();
-                int index = random.nextInt(numberOfButtons);
-                pressButton(currentDiagram, buttons.get(index));
-                presses++;
+
+            for (int j = 0; j < numberOfButtons; j++) {
+                if (currentCombination.get(j) == 1) {
+                    pressButton(currentDiagram, buttons.get(j));
+                    presses++;
+                }
             }
-            if (presses < fewest) fewest = presses;
+            if (checkIfEqual(targetDiagram, currentDiagram)) {
+                fewest = Math.min(fewest, presses);
+            }
         }
         return fewest;
     }
@@ -139,6 +116,52 @@ public class Day10 {
         return true;
     }
 
+
+    private static void prepareData(List<String> input) {
+        for (String currentMachine : input) {
+            String lightDiagram = currentMachine.substring(1, currentMachine.indexOf("]"));
+            String joltageReq = currentMachine.substring(
+                    currentMachine.indexOf("{") + 1, currentMachine.indexOf("}"));
+            Machine machine = new Machine(lightDiagram, joltageReq);
+            String[] buttonArray = currentMachine
+                    .substring(currentMachine.indexOf("]") + 1, currentMachine.indexOf("{"))
+                    .strip()
+                    .split(" ");
+            List<Integer> button = new ArrayList<>();
+            for (String currentButton : buttonArray) {
+                String[] buttonAsArray = currentButton.split(",");
+                button = new ArrayList<>();
+                for (String buttonInt : buttonAsArray) {
+                    button.add(Integer.parseInt(buttonInt.strip().replaceAll("[^0-9]", "")));
+                }
+                machine.addButton(button);
+            }
+            MACHINE_LIST.add(machine);
+        }
+//        System.out.println("MACHINE_LIST = " + MACHINE_LIST);
+    }
+
+    static void partOne() {
+        System.out.println("PART I:");
+        int size = MACHINE_LIST.size();
+        int fewestPressSum = 0;
+
+
+        for (Machine machine : MACHINE_LIST) {
+            String diagramToAchieve = machine.getLightDiagram();
+            List<List<Integer>> buttons = machine.getButtonList();
+            int presses = findFewestButtonPresses(diagramToAchieve, buttons);
+            fewestPressSum += presses;
+//            System.out.println("presses = " + presses);
+        }
+        System.out.println("fewestPressSum = " + fewestPressSum);
+
+    }
+
+    static void partTwo() {
+        System.out.println("\nPART II:");
+
+    }
 
     public static void main(String[] args) {
         String pathToInputFile = "src/main/resources/day10.txt";
