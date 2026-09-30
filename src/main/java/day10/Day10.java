@@ -51,25 +51,19 @@ public class Day10 {
         }
     }
 
-    static List<List<Integer>> getAllCombinations(int size) {
-        List<List<Integer>> result = new ArrayList<>();
-        result.add(new ArrayList<>());
+    static int[][] getAllCombinations(int size) {
+        int combinations = (int) Math.pow(2, size);
+        int[][] result = new int[combinations][size];
 
-        for (int i = 0; i < size; i++) {
-            List<List<Integer>> newCombinations = new ArrayList<>();
+        for (int i = 0; i < combinations; i++) {
+            int value = i;
 
-            for (List<Integer> combination : result) {
-                List<Integer> zero = new ArrayList<>(combination);
-                zero.add(0);
-                newCombinations.add(zero);
-
-                List<Integer> one = new ArrayList<>(combination);
-                one.add(1);
-                newCombinations.add(one);
+            for (int j = size - 1; j >= 0; j--) {
+                result[i][j] = value % 2;
+                value /= 2;
             }
-
-            result = newCombinations;
         }
+
         return result;
     }
 
@@ -77,15 +71,15 @@ public class Day10 {
     private static int findFewestButtonPresses(String targetDiagram, List<List<Integer>> buttons) {
         int fewest = Integer.MAX_VALUE;
         int numberOfButtons = buttons.size();
-        List<List<Integer>> buttonCombinations = getAllCombinations(numberOfButtons);
+        int[][] buttonCombinations = getAllCombinations(numberOfButtons);
 
-        for (List<Integer> currentCombination : buttonCombinations) {
+        for (int[] currentCombination : buttonCombinations) {
             char[] currentDiagram = new char[targetDiagram.length()];
             Arrays.fill(currentDiagram, LIGHT_OFF); // indicator lights are all initially off
             int presses = 0;
 
             for (int j = 0; j < numberOfButtons; j++) {
-                if (currentCombination.get(j) == 1) {
+                if (currentCombination[j] == 1) {
                     pressButton(currentDiagram, buttons.get(j));
                     presses++;
                 }
@@ -97,7 +91,7 @@ public class Day10 {
         return fewest;
     }
 
-    private static char[] pressButton(char[] diagram, List<Integer> button) {
+    private static void pressButton(char[] diagram, List<Integer> button) {
         for (int i = 0; i < button.size(); i++) {
             int lightNumber = button.get(i);
             if (diagram[lightNumber] == LIGHT_OFF) {
@@ -106,7 +100,6 @@ public class Day10 {
                 diagram[lightNumber] = LIGHT_OFF;
             }
         }
-        return diagram;
     }
 
     private static boolean checkIfEqual(String diagramToAchieve, char[] currentDiagram) {
