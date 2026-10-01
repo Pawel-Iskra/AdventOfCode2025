@@ -84,7 +84,7 @@ public class Day10 {
                     presses++;
                 }
             }
-            if (checkIfEqual(targetDiagram, currentDiagram)) {
+            if (checkIfEqualLightDiagram(targetDiagram, currentDiagram)) {
                 fewest = Math.min(fewest, presses);
             }
         }
@@ -101,7 +101,7 @@ public class Day10 {
         }
     }
 
-    private static boolean checkIfEqual(String diagramToAchieve, char[] currentDiagram) {
+    private static boolean checkIfEqualLightDiagram(String diagramToAchieve, char[] currentDiagram) {
         for (int i = 0; i < diagramToAchieve.length(); i++) {
             if (currentDiagram[i] != diagramToAchieve.charAt(i)) return false;
         }
@@ -138,7 +138,7 @@ public class Day10 {
         System.out.println("MACHINE_LIST = " + MACHINE_LIST);
     }
 
-    private static boolean checkIfEqual(int[] currentJoltageConfig, List<Integer> targetJoltageConfig) {
+    private static boolean checkIfEqualJoltage(int[] currentJoltageConfig, List<Integer> targetJoltageConfig) {
         for (int i = 0; i < targetJoltageConfig.size(); i++) {
             if (currentJoltageConfig[i] != targetJoltageConfig.get(i)) return false;
         }
@@ -158,7 +158,7 @@ public class Day10 {
         return false;
     }
 
-    private static boolean checkIfAnyButtonIsOverMax(int[] currentButtonsPress, int[] maxButtonsPress) {
+    private static boolean checkIfAnyButtonIsOverLimit(int[] currentButtonsPress, int[] maxButtonsPress) {
         for (int i = 0; i < currentButtonsPress.length; i++) {
             if (currentButtonsPress[i] > maxButtonsPress[i]) return true;
         }
@@ -167,43 +167,45 @@ public class Day10 {
 
     private static int findFewestButtonPressesForJoltageConfig(List<Integer> targetJoltageConfig, List<List<Integer>> buttons) {
         int fewest = 10_000_000;
-        int size = targetJoltageConfig.size();
+        int sizeJoltage = targetJoltageConfig.size();
+        int minButtonsPress = targetJoltageConfig.stream()
+                .max(Integer::compareTo)
+                .orElse(0);
         int[] maxButtonsPress = new int[buttons.size()];
-        int[] currentButtonsPress = new int[buttons.size()];
-
         for (int i = 0; i < buttons.size(); i++) {
             List<Integer> currentButton = buttons.get(i);
             maxButtonsPress[i] = currentButton.stream()
                     .map(targetJoltageConfig::get)
                     .min(Integer::compareTo)
-                    .orElse(0);
+                    .orElse(Integer.MAX_VALUE);
         }
         System.out.println("\ntargetJoltageConfig = " + targetJoltageConfig);
+        System.out.println("minButtonsPress = " + minButtonsPress);
         System.out.println("buttons = " + buttons);
         System.out.println("maxButtonsPress = " + Arrays.toString(maxButtonsPress));
 
-
         int[] currentButtonPressCombination = new int[maxButtonsPress.length];
         while (true) {
-
 //            System.out.println("currentButtonPressCombination = " + Arrays.toString(currentButtonPressCombination));
+            int pressesInCurrentCombination = Arrays.stream(currentButtonPressCombination).sum();
             int presses = 0;
-            int[] currentJoltageConfig = new int[size];
+            int[] currentJoltageConfig = new int[sizeJoltage];
             boolean exceeded = false;
-            for (int j = 0; j < currentButtonPressCombination.length; j++) {
-                for (int k = 0; k < currentButtonPressCombination[j]; k++) {
-                    pressJoltageButton(currentJoltageConfig, buttons.get(j));
+            if (fewest > pressesInCurrentCombination && pressesInCurrentCombination >= minButtonsPress) {
+                for (int j = 0; j < currentButtonPressCombination.length; j++) {
+                    for (int k = 0; k < currentButtonPressCombination[j]; k++) {
+                        pressJoltageButton(currentJoltageConfig, buttons.get(j));
+                    }
+                    if (checkIfAnyJoltageIsOverLimit(currentJoltageConfig, targetJoltageConfig)) {
+                        exceeded = true;
+                        break;
+                    }
                 }
-                if (checkIfAnyJoltageIsOverLimit(currentJoltageConfig, targetJoltageConfig)) {
-                    exceeded = true;
-                    break;
+                if (!exceeded && checkIfEqualJoltage(currentJoltageConfig, targetJoltageConfig)) {
+                    presses = pressesInCurrentCombination;
+                    System.out.println("presses = " + presses);
+                    fewest = Math.min(presses, fewest);
                 }
-            }
-
-            if (!exceeded && checkIfEqual(currentJoltageConfig, targetJoltageConfig)) {
-                presses = Arrays.stream(currentButtonPressCombination).sum();
-                System.out.println("presses = " + presses);
-                fewest = Math.min(fewest, presses);
             }
 
             // counters fpr each button press
