@@ -2,9 +2,7 @@ package day10;
 
 import utils.MyUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Day10 {
 
@@ -165,6 +163,7 @@ public class Day10 {
         return false;
     }
 
+    // too slow
     private static int findFewestButtonPressesForJoltageConfig(List<Integer> targetJoltageConfig, List<List<Integer>> buttons) {
         int fewest = 10_000_000;
         int sizeJoltage = targetJoltageConfig.size();
@@ -208,7 +207,7 @@ public class Day10 {
                 }
             }
 
-            // counters fpr each button press
+            // counters for each button press
             int index = currentButtonPressCombination.length - 1;
             while (index >= 0) {
                 if (currentButtonPressCombination[index] < maxButtonsPress[index]) {
@@ -223,16 +222,58 @@ public class Day10 {
             }
         }
         return fewest;
+    } // FEWEST:  0-> 49, 1-> 60, 2-> 40, 3 -> ?
+
+
+    //
+    private static int findFewestButtonPressesForJoltageConfigWithMemo(List<Integer> targetJoltageConfig, List<List<Integer>> buttons) {
+        System.out.println("\ntargetJoltageConfig = " + targetJoltageConfig);
+        int joltageSize = targetJoltageConfig.size();
+        int fewest = 1_000_000;
+        List<Integer> joltageConfigDownToZero = new ArrayList<>(Collections.nCopies(joltageSize, 0));
+        Map<List<Integer>, Integer> joltageConfigMemory = new HashMap<>();
+        joltageConfigMemory.put(targetJoltageConfig, 0);
+
+        while (!joltageConfigMemory.isEmpty()) {
+            Map<List<Integer>, Integer> nextJoltageConfigStates = new HashMap<>();
+
+            for (Map.Entry<List<Integer>, Integer> currentMemorySet : joltageConfigMemory.entrySet()) {
+                List<Integer> currentJoltageConfig = currentMemorySet.getKey();
+                int presses = currentMemorySet.getValue();
+
+                for (List<Integer> button : buttons) {
+                    List<Integer> joltageConfigAfterButtonClick = subtractOneButtonClick(currentJoltageConfig, button);
+                    if (!isAnyJoltageBelowZero(joltageConfigAfterButtonClick)) {
+                        nextJoltageConfigStates.merge(joltageConfigAfterButtonClick, presses + 1, Math::min);
+                    }
+                }
+            }
+            joltageConfigMemory = nextJoltageConfigStates;
+            if (joltageConfigMemory.containsKey(joltageConfigDownToZero)) {
+                fewest = Math.min(fewest, joltageConfigMemory.get(joltageConfigDownToZero));
+                System.out.println("joltageConfigMemory.get(joltageConfigDownToZero) = " + joltageConfigMemory.get(joltageConfigDownToZero));
+                return joltageConfigMemory.get(joltageConfigDownToZero);
+            }
+//            System.out.println("joltageConfigMemory = ");
+//            joltageConfigMemory.forEach((key, value) -> System.out.println("key = " + key + ", value = " + value));
+        }
+        return fewest;
+    } // FEWEST:  0-> 49, 1-> 60, 2-> 40, 3 -> OutOfMemoryError
+
+    private static boolean isAnyJoltageBelowZero(List<Integer> joltageConfigAfterButtonClick) {
+        for (Integer currentJoltage : joltageConfigAfterButtonClick) {
+            if (currentJoltage < 0) return true;
+        }
+        return false;
     }
 
-    /*
-        FEWEST:
-        0-> 49
-        1-> 60
-        2-> 40
-        3 ->
-    */
-
+    private static List<Integer> subtractOneButtonClick(List<Integer> currentJoltageConfig, List<Integer> button) {
+        List<Integer> resultJoltageConfig = new ArrayList<>(currentJoltageConfig);
+        for (int currentButton : button) {
+            resultJoltageConfig.set(currentButton, resultJoltageConfig.get(currentButton) - 1);
+        }
+        return resultJoltageConfig;
+    }
 
     private static List<int[]> generateAllCombinations(int[] maxValues) {
         List<int[]> result = new ArrayList<>();
@@ -252,6 +293,7 @@ public class Day10 {
         }
         return result;
     }
+
 
     static void partOne() {
         System.out.println("PART I:");
@@ -274,7 +316,7 @@ public class Day10 {
         for (Machine machine : MACHINE_LIST) {
             List<Integer> joltageConfig = machine.getJoltageConfig();
             List<List<Integer>> buttons = machine.getButtonList();
-            int presses = findFewestButtonPressesForJoltageConfig(joltageConfig, buttons);
+            int presses = findFewestButtonPressesForJoltageConfigWithMemo(joltageConfig, buttons);
             System.out.println(index + " -> presses = " + presses);
             fewestPressSum += presses;
             index++;
