@@ -275,6 +275,36 @@ public class Day10 {
         return resultJoltageConfig;
     }
 
+    private static int findFewestButtonPressesForJoltageConfigWithMemoSet(List<Integer> targetJoltageConfig, List<List<Integer>> buttons) {
+        System.out.println("\ntargetJoltageConfig = " + targetJoltageConfig);
+        System.out.println("buttons = " + buttons);
+
+        int joltageSize = targetJoltageConfig.size();
+        List<Integer> joltageConfigDownToZero = new ArrayList<>(Collections.nCopies(joltageSize, 0));
+        Set<List<Integer>> configStates = new HashSet<>();
+        configStates.add(targetJoltageConfig);
+        int presses = 0;
+
+        while (!configStates.isEmpty()) {
+            Set<List<Integer>> nextConfigStates = new HashSet<>();
+            for (List<Integer> currentConfigState : configStates) {
+                for (List<Integer> currentButton : buttons) {
+                    List<Integer> configStateAfterOneButtonClick = subtractOneButtonClick(currentConfigState, currentButton);
+                    if (!isAnyJoltageBelowZero(configStateAfterOneButtonClick)) {
+                        nextConfigStates.add(configStateAfterOneButtonClick);
+                    }
+                }
+            }
+            presses++;
+            if (nextConfigStates.contains(joltageConfigDownToZero)) {
+                return presses;
+            }
+            configStates = nextConfigStates;
+        }
+        return presses;
+    }
+
+
     private static List<int[]> generateAllCombinations(int[] maxValues) {
         List<int[]> result = new ArrayList<>();
         result.add(new int[maxValues.length]);
@@ -316,7 +346,7 @@ public class Day10 {
         for (Machine machine : MACHINE_LIST) {
             List<Integer> joltageConfig = machine.getJoltageConfig();
             List<List<Integer>> buttons = machine.getButtonList();
-            int presses = findFewestButtonPressesForJoltageConfigWithMemo(joltageConfig, buttons);
+            int presses = findFewestButtonPressesForJoltageConfigWithMemoSet(joltageConfig, buttons);
             System.out.println(index + " -> presses = " + presses);
             fewestPressSum += presses;
             index++;
