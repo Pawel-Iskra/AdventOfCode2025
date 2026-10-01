@@ -3,6 +3,8 @@ package day10;
 import utils.MyUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Day10 {
 
@@ -107,35 +109,6 @@ public class Day10 {
     }
 
 
-    private static void prepareData(List<String> input) {
-        for (String currentMachineData : input) {
-            String lightDiagram = currentMachineData.substring(1, currentMachineData.indexOf("]"));
-            String[] joltageConfigAsArray = currentMachineData
-                    .substring(currentMachineData.indexOf("{") + 1, currentMachineData.indexOf("}"))
-                    .split(",");
-            List<Integer> joltageConfig = Arrays.stream(joltageConfigAsArray)
-                    .map(Integer::parseInt)
-                    .toList();
-            Machine machine = new Machine(lightDiagram, joltageConfig);
-
-            String[] buttonArray = currentMachineData
-                    .substring(currentMachineData.indexOf("]") + 1, currentMachineData.indexOf("{"))
-                    .strip()
-                    .split(" ");
-            List<Integer> button;
-            for (String currentButton : buttonArray) {
-                String[] buttonAsArray = currentButton.split(",");
-                button = new ArrayList<>();
-                for (String buttonInt : buttonAsArray) {
-                    button.add(Integer.parseInt(buttonInt.strip().replaceAll("[^0-9]", "")));
-                }
-                machine.addButton(button);
-            }
-            MACHINE_LIST.add(machine);
-        }
-        System.out.println("MACHINE_LIST = " + MACHINE_LIST);
-    }
-
     private static boolean checkIfEqualJoltage(int[] currentJoltageConfig, List<Integer> targetJoltageConfig) {
         for (int i = 0; i < targetJoltageConfig.size(); i++) {
             if (currentJoltageConfig[i] != targetJoltageConfig.get(i)) return false;
@@ -164,6 +137,7 @@ public class Day10 {
     }
 
     // too slow
+
     private static int findFewestButtonPressesForJoltageConfig(List<Integer> targetJoltageConfig, List<List<Integer>> buttons) {
         int fewest = 10_000_000;
         int sizeJoltage = targetJoltageConfig.size();
@@ -224,8 +198,8 @@ public class Day10 {
         return fewest;
     } // FEWEST:  0-> 49, 1-> 60, 2-> 40, 3 -> ?
 
-
     //
+
     private static int findFewestButtonPressesForJoltageConfigWithMemo(List<Integer> targetJoltageConfig, List<List<Integer>> buttons) {
         System.out.println("\ntargetJoltageConfig = " + targetJoltageConfig);
         int joltageSize = targetJoltageConfig.size();
@@ -325,6 +299,67 @@ public class Day10 {
     }
 
 
+    private static int findFewestButtonPressesForJoltageConfigWithEquations(List<Integer> joltageConfig, List<List<Integer>> buttons) {
+        /*  buttons + target
+                ↓
+            macierz A | b
+                ↓
+            Gauss-Jordan
+                ↓
+        pivot variables + free variables
+                ↓
+        ograniczenia x >= 0, x całkowite
+                ↓
+        minimalizuj sum(x)  */
+
+        int[][] buttonMatrix = new int[joltageConfig.size()][buttons.size()];
+        int col = 0;
+        for (List<Integer> button : buttons) {
+            for (int buttonPart : button) {
+                buttonMatrix[buttonPart][col] = 1;
+            }
+            col++;
+        }
+        System.out.println("joltageConfig = " + joltageConfig);
+        System.out.println("buttons = " + buttons);
+        System.out.println("buttonMatrix = ");
+        for (int[] button : buttonMatrix) {
+            System.out.println(Arrays.toString(button));
+        }
+
+        return 0;
+    }
+
+    private static void prepareData(List<String> input) {
+        for (String currentMachineData : input) {
+            String lightDiagram = currentMachineData.substring(1, currentMachineData.indexOf("]"));
+            String[] joltageConfigAsArray = currentMachineData
+                    .substring(currentMachineData.indexOf("{") + 1, currentMachineData.indexOf("}"))
+                    .split(",");
+            List<Integer> joltageConfig = Arrays.stream(joltageConfigAsArray)
+                    .map(Integer::parseInt)
+                    .toList();
+            Machine machine = new Machine(lightDiagram, joltageConfig);
+
+            String[] buttonArray = currentMachineData
+                    .substring(currentMachineData.indexOf("]") + 1, currentMachineData.indexOf("{"))
+                    .strip()
+                    .split(" ");
+            List<Integer> button;
+            for (String currentButton : buttonArray) {
+                String[] buttonAsArray = currentButton.split(",");
+                button = new ArrayList<>();
+                for (String buttonInt : buttonAsArray) {
+                    button.add(Integer.parseInt(buttonInt.strip().replaceAll("[^0-9]", "")));
+                }
+                machine.addButton(button);
+            }
+            MACHINE_LIST.add(machine);
+        }
+        System.out.println("MACHINE_LIST = " + MACHINE_LIST);
+    }
+
+
     static void partOne() {
         System.out.println("PART I:");
         int fewestPressSum = 0;
@@ -346,13 +381,14 @@ public class Day10 {
         for (Machine machine : MACHINE_LIST) {
             List<Integer> joltageConfig = machine.getJoltageConfig();
             List<List<Integer>> buttons = machine.getButtonList();
-            int presses = findFewestButtonPressesForJoltageConfigWithMemoSet(joltageConfig, buttons);
+            int presses = findFewestButtonPressesForJoltageConfigWithEquations(joltageConfig, buttons);
             System.out.println(index + " -> presses = " + presses);
             fewestPressSum += presses;
             index++;
         }
         System.out.println("fewestPressSum = " + fewestPressSum);
     }
+
 
     static void main() {
         String pathToInputFile = "src/main/resources/day10.txt";
