@@ -62,13 +62,37 @@ public class Day11 {
                     continue;
                 }
                 for (Integer nextNode : getAdjacencyList(currentNode)) {
-                    List<Integer> newPath = new ArrayList<>(currentPath);
-                    newPath.add(nextNode);
-                    pathsQueue.add(newPath);
+                    if (!currentPath.contains(nextNode)) {
+                        List<Integer> newPath = new ArrayList<>(currentPath);
+                        newPath.add(nextNode);
+                        pathsQueue.add(newPath);
+                    }
                 }
             }
             return pathsFromTo;
-        }
+        } // part 2-> OutOfMemoryError: Java heap space
+
+
+        public int getCountAllPossiblePathsFromToContaining(int from, int to, List<Integer> nodesRequired) {
+            return dfsFromToContaining(from, to, nodesRequired, new HashSet<>());
+        } // too slow
+
+        private int dfsFromToContaining(int current, int to, List<Integer> nodesRequired, Set<Integer> visited) {
+            visited.add(current);
+            if (current == to) {
+                boolean containsAll = visited.containsAll(nodesRequired);
+                visited.remove(current);
+                return containsAll ? 1 : 0;
+            }
+            int counter = 0;
+            for (int next : getAdjacencyList(current)) {
+                if (!visited.contains(next)) {
+                    counter += dfsFromToContaining(next, to, nodesRequired, visited);
+                }
+            }
+            visited.remove(current);
+            return counter;
+        } // too slow
 
         public void depthFirstSearch(int vertex) {
             visited[vertex] = true;
@@ -115,9 +139,9 @@ public class Day11 {
 
     static void partOne() {
         System.out.println("PART I:");
-        int youIndex = NODE_LIST.indexOf(YOU);
-        int outIndex = NODE_LIST.indexOf(OUT);
-        List<List<Integer>> resultPaths = GRAPH_NETWORK.getAllPossiblePathsFromTo(youIndex, outIndex);
+        int youNodeIndex = NODE_LIST.indexOf(YOU);
+        int outNodeIndex = NODE_LIST.indexOf(OUT);
+        List<List<Integer>> resultPaths = GRAPH_NETWORK.getAllPossiblePathsFromTo(youNodeIndex, outNodeIndex);
 
 //        System.out.println("resultPaths = ");
 //        for (List<Integer> path : resultPaths) {
@@ -136,7 +160,14 @@ public class Day11 {
 
     static void partTwo() {
         System.out.println("\nPART II:");
+        int svrNodeIndex = NODE_LIST.indexOf(SVR);
+        int outNodeIndex = NODE_LIST.indexOf(OUT);
+        int dacNodeIndex = NODE_LIST.indexOf(DAC);
+        int fftNodeIndex = NODE_LIST.indexOf(FFT);
 
+        int result = GRAPH_NETWORK.getCountAllPossiblePathsFromToContaining(
+                svrNodeIndex, outNodeIndex, List.of(dacNodeIndex, fftNodeIndex));
+        System.out.println("result = " + result);
     }
 
 
@@ -145,7 +176,7 @@ public class Day11 {
         List<String> inputLines = MyUtils.getInputLines(pathToInputFile);
 
         prepareData(inputLines);
-        partOne();
+//        partOne();
         partTwo();
     }
 }
