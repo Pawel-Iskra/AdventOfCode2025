@@ -103,17 +103,17 @@ public class Day11 {
         }
 
         private long countPaths(int node, int to, int firstRequired, int secondRequired, int visitedNodesMask, Map<State, Long> memo) {
-            visitedNodesMask = updateMask(visitedNodesMask, node, firstRequired, secondRequired);
+            int visitedNodesMaskUpdated = updateMask(visitedNodesMask, node, firstRequired, secondRequired);
             if (node == to) {
-                return visitedNodesMask == 3 ? 1 : 0;
+                return visitedNodesMaskUpdated == 3 ? 1 : 0;
             }
-            State state = new State(node, visitedNodesMask);
+            State state = new State(node, visitedNodesMaskUpdated);
             if (memo.containsKey(state)) {
                 return memo.get(state);
             }
             long counter = 0;
             for (int next : getAdjacencyList(node)) {
-                counter += countPaths(next, to, firstRequired, secondRequired, visitedNodesMask, memo);
+                counter += countPaths(next, to, firstRequired, secondRequired, visitedNodesMaskUpdated, memo);
             }
             memo.put(state, counter);
             return counter;

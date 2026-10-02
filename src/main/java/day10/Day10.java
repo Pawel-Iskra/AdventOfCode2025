@@ -274,7 +274,7 @@ public class Day10 {
             configStates = nextConfigStates;
         }
         return presses;
-    }
+    }// FEWEST:  0-> 49, 1-> 60, 2-> 40, 3 -> OutOfMemoryError
 
 
     private static List<int[]> generateAllCombinations(int[] maxValues) {
@@ -379,7 +379,7 @@ public class Day10 {
         for (Machine machine : MACHINE_LIST) {
             List<Integer> joltageConfig = machine.getJoltageConfig();
             List<List<Integer>> buttons = machine.getButtonList();
-            int presses = findFewestButtonPressesForJoltageConfigWithEquations(joltageConfig, buttons);
+            int presses = findFewestButtonPressesForJoltageConfigWithMemoSet(joltageConfig, buttons);
             System.out.println(index + " -> presses = " + presses);
             fewestPressSum += presses;
             index++;
