@@ -17,6 +17,9 @@ public class Day11 {
     private static List<String> NODE_LIST;
 
 
+    record State(int node, int visitedNodesMask) {
+    }
+
     record Edge(int from, int to) {
     }
 
@@ -75,7 +78,7 @@ public class Day11 {
 
         public int getCountAllPossiblePathsFromToContaining(int from, int to, List<Integer> nodesRequired) {
             return dfsFromToContaining(from, to, nodesRequired, new HashSet<>());
-        } // too slow
+        } // part 2- too slow
 
         private int dfsFromToContaining(int current, int to, List<Integer> nodesRequired, Set<Integer> visited) {
             visited.add(current);
@@ -92,7 +95,39 @@ public class Day11 {
             }
             visited.remove(current);
             return counter;
-        } // too slow
+        } // part 2 - too slow
+
+
+        public long getCountAllPossiblePathsFromToContaining(int from, int to, int firstRequired, int secondRequired) {
+            return countPaths(from, to, firstRequired, secondRequired, 0, new HashMap<>());
+        }
+
+        private long countPaths(int node, int to, int firstRequired, int secondRequired, int visitedNodesMask, Map<State, Long> memo) {
+            visitedNodesMask = updateMask(visitedNodesMask, node, firstRequired, secondRequired);
+            if (node == to) {
+                return visitedNodesMask == 3 ? 1 : 0;
+            }
+            State state = new State(node, visitedNodesMask);
+            if (memo.containsKey(state)) {
+                return memo.get(state);
+            }
+            long counter = 0;
+            for (int next : getAdjacencyList(node)) {
+                counter += countPaths(next, to, firstRequired, secondRequired, visitedNodesMask, memo);
+            }
+            memo.put(state, counter);
+            return counter;
+        }
+
+        private int updateMask(int visitedNodesMask, int node, int firstRequired, int secondRequired) {
+            if (node == firstRequired) {
+                visitedNodesMask |= 1;
+            }
+            if (node == secondRequired) {
+                visitedNodesMask |= 2;
+            }
+            return visitedNodesMask;
+        }
 
         public void depthFirstSearch(int vertex) {
             visited[vertex] = true;
@@ -136,24 +171,26 @@ public class Day11 {
 //        System.out.println("graph = " + GRAPH_NETWORK);
     }
 
+    private static void printOutPaths(List<List<Integer>> paths) {
+        System.out.println("resultPaths = ");
+        for (List<Integer> path : paths) {
+            for (int node : path) {
+                System.out.print(NODE_LIST.get(node));
+                if (!OUT.equals(NODE_LIST.get(node))) {
+                    System.out.print(" -> ");
+                }
+            }
+            System.out.println();
+        }
+    }
 
     static void partOne() {
         System.out.println("PART I:");
         int youNodeIndex = NODE_LIST.indexOf(YOU);
         int outNodeIndex = NODE_LIST.indexOf(OUT);
+
         List<List<Integer>> resultPaths = GRAPH_NETWORK.getAllPossiblePathsFromTo(youNodeIndex, outNodeIndex);
-
-//        System.out.println("resultPaths = ");
-//        for (List<Integer> path : resultPaths) {
-//            for (int node : path) {
-//                System.out.print(NODE_LIST.get(node));
-//                if (!OUT.equals(NODE_LIST.get(node))) {
-//                    System.out.print(" -> ");
-//                }
-//            }
-//            System.out.println();
-//        }
-
+//        printOutPaths(resultPaths);
         System.out.println("resultPaths.size() = " + resultPaths.size());
     }
 
@@ -165,10 +202,11 @@ public class Day11 {
         int dacNodeIndex = NODE_LIST.indexOf(DAC);
         int fftNodeIndex = NODE_LIST.indexOf(FFT);
 
-        int result = GRAPH_NETWORK.getCountAllPossiblePathsFromToContaining(
-                svrNodeIndex, outNodeIndex, List.of(dacNodeIndex, fftNodeIndex));
+        long result = GRAPH_NETWORK.getCountAllPossiblePathsFromToContaining(
+                svrNodeIndex, outNodeIndex, dacNodeIndex, fftNodeIndex);
         System.out.println("result = " + result);
     }
+    // 1906355968 - too low
 
 
     static void main() {
@@ -176,7 +214,7 @@ public class Day11 {
         List<String> inputLines = MyUtils.getInputLines(pathToInputFile);
 
         prepareData(inputLines);
-//        partOne();
+        partOne();
         partTwo();
     }
 }
