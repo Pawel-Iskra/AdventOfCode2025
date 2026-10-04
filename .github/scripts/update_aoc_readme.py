@@ -5,8 +5,6 @@ session = os.environ["AOC_SESSION"]
 
 print("Session length:", len(session))
 print("Contains whitespace:", any(c.isspace() for c in session))
-print("Session starts:", session[:10])
-print("Session ends:", session[-10:])
 print("<title>Advent of Code" in html)
 print("Log In" in html)
 
