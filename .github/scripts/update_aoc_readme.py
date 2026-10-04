@@ -1,5 +1,7 @@
 import os
 import urllib.request
+import re
+
 
 year = 2025
 url = f"https://adventofcode.com/{year}"
@@ -21,3 +23,8 @@ with urllib.request.urlopen(request) as response:
 
 print(f"Downloaded {len(html)} bytes")
 print(html[:500])
+
+matches = re.findall(r'completion_day_level.*', html)
+
+for match in matches[:5]:
+    print(match)
