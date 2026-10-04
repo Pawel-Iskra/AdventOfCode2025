@@ -25,6 +25,10 @@ with urllib.request.urlopen(request) as response:
 matches = re.findall(r'completion_day_level.*', html)
 print("Matches:", len(matches))
 
+for line in html.splitlines():
+    if "day" in line.lower() or "star" in line.lower():
+        print(line)
+
 print("Status:", response.status)
 print("URL:", response.url)
 print("Content-Type:", response.headers.get("Content-Type"))
