@@ -28,7 +28,7 @@ with urllib.request.urlopen(request) as response:
 
 POLAND = ZoneInfo("Europe/Warsaw")
 AOC_TZ = ZoneInfo("America/New_York")
-aoc_start = datetime(2025, 12, day, 0, 0, 0, tzinfo=AOC_TZ)
+# aoc_start = datetime(2025, 12, day, 0, 0, 0, tzinfo=AOC_TZ)
 
 completed_at = aoc_start + timedelta(
     hours=hours,
