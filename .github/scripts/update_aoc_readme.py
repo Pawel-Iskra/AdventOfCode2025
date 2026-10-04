@@ -25,10 +25,22 @@ with urllib.request.urlopen(request) as response:
     html = response.read().decode("utf-8")
 
 
+for line in table.splitlines():
+    parts = line.split()
+
+    if not parts or not parts[0].isdigit():
+        continue
+
+    day = int(parts[0])
+    part1 = parts[1]
+    part2 = parts[2]
+
+    print(day, part1, part2)
+
 
 POLAND = ZoneInfo("Europe/Warsaw")
 AOC_TZ = ZoneInfo("America/New_York")
-# aoc_start = datetime(2025, 12, day, 0, 0, 0, tzinfo=AOC_TZ)
+aoc_start = datetime(2025, 12, day, 0, 0, 0, tzinfo=AOC_TZ)
 
 completed_at = aoc_start + timedelta(
     hours=hours,
@@ -37,3 +49,8 @@ completed_at = aoc_start + timedelta(
 )
 
 completed_at = completed_at.astimezone(POLAND)
+
+start = html.find("<pre>")
+end = html.find("</pre>")
+
+table = html[start:end]
