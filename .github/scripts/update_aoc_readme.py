@@ -41,8 +41,6 @@ for line in table.splitlines():
     print(day, part1, part2)
 
 
-duration = parse_duration(part1)
-
 def parse_duration(duration):
     hours, minutes, seconds = map(int, duration.split(":"))
     return timedelta(
@@ -50,7 +48,7 @@ def parse_duration(duration):
         minutes=minutes,
         seconds=seconds
     )
-
+duration = parse_duration(part1)
 
 aoc_start = datetime(
     2025, 12, day,
