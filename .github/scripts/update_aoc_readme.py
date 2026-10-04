@@ -4,7 +4,7 @@ import re
 
 
 year = 2025
-url = f"https://adventofcode.com/{year}"
+url = f"https://adventofcode.com/{year}/leaderboard/self"
 
 request = urllib.request.Request(
     url,
