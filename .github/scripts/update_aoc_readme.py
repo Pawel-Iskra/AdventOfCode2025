@@ -1,7 +1,7 @@
 import os
 import urllib.request
 
-session = os.environ["AOC_SESSION"].strip()
+session = os.environ["AOC_SESSION"]
 
 print("Session length:", len(session))
 print("Contains whitespace:", any(c.isspace() for c in session))
