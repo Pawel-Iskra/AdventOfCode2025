@@ -24,6 +24,11 @@ request = urllib.request.Request(
 with urllib.request.urlopen(request) as response:
     html = response.read().decode("utf-8")
 
+start = html.find("<pre>")
+end = html.find("</pre>")
+
+table = html[start:end]
+
 
 for line in table.splitlines():
     parts = line.split()
@@ -49,8 +54,3 @@ completed_at = aoc_start + timedelta(
 )
 
 completed_at = completed_at.astimezone(POLAND)
-
-start = html.find("<pre>")
-end = html.find("</pre>")
-
-table = html[start:end]
