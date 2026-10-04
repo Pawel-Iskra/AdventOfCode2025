@@ -1,4 +1,5 @@
 import os
+import re
 import urllib.request
 
 session = os.environ["AOC_SESSION"]
@@ -19,6 +20,10 @@ request = urllib.request.Request(
 
 with urllib.request.urlopen(request) as response:
     html = response.read().decode("utf-8")
+
+
+matches = re.findall(r'completion_day_level.*', html)
+print("Matches:", len(matches))
 
 print("Status:", response.status)
 print("URL:", response.url)
