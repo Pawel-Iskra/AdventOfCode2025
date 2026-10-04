@@ -1,10 +1,12 @@
 import os
 import urllib.request
 
-session = "".join(os.environ["AOC_SESSION"].split())
+session = os.environ["AOC_SESSION"].strip()
 
 print("Session length:", len(session))
-print("Session starts with:", session[:3])
+print("Contains whitespace:", any(c.isspace() for c in session))
+print("Session starts:", session[:10])
+print("Session ends:", session[-10:])
 
 year = 2025
 url = f"https://adventofcode.com/{year}/leaderboard/self"
