@@ -15,3 +15,9 @@ with urllib.request.urlopen(request) as response:
     html = response.read().decode("utf-8")
 
 print(f"Downloaded {len(html)} bytes")
+
+with urllib.request.urlopen(request) as response:
+    html = response.read().decode("utf-8")
+
+print(f"Downloaded {len(html)} bytes")
+print(html[:500])
