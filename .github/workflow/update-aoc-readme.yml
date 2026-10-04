@@ -1,0 +1,5 @@
+- name: Update README
+  env:
+    AOC_SESSION: ${{ secrets.AOC_SESSION }}
+  run: |
+    python .github/scripts/update_aoc_readme.py
