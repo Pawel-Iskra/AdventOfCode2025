@@ -7,7 +7,7 @@ url = f"https://adventofcode.com/{year}"
 request = urllib.request.Request(
     url,
     headers={
-        "Cookie": f"session={os.environ['AOC2025_SESSION']}"
+        "Cookie": f"session={os.environ['AOC_SESSION']}"
     }
 )
 
