@@ -26,9 +26,7 @@ with urllib.request.urlopen(request) as response:
 
 start = html.find("<pre>")
 end = html.find("</pre>")
-
 table = html[start:end]
-
 
 for line in table.splitlines():
     parts = line.split()
@@ -43,6 +41,23 @@ for line in table.splitlines():
     print(day, part1, part2)
 
 
+duration = parse_duration(part1)
+
+def parse_duration(duration):
+    hours, minutes, seconds = map(int, duration.split(":"))
+    return timedelta(
+        hours=hours,
+        minutes=minutes,
+        seconds=seconds
+    )
+
+
+aoc_start = datetime(
+    2025, 12, day,
+    0, 0, 0,
+    tzinfo=AOC_TZ
+)
+
 POLAND = ZoneInfo("Europe/Warsaw")
 AOC_TZ = ZoneInfo("America/New_York")
 aoc_start = datetime(2025, 12, day, 0, 0, 0, tzinfo=AOC_TZ)
@@ -53,4 +68,6 @@ completed_at = aoc_start + timedelta(
     seconds=seconds
 )
 
+completed_at = aoc_start + duration
 completed_at = completed_at.astimezone(POLAND)
+print(completed_at)
