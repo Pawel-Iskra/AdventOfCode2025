@@ -2,6 +2,9 @@ import os
 import re
 import urllib.request
 
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
 session = os.environ["AOC_SESSION"]
 
 print("Session length:", len(session))
@@ -22,14 +25,15 @@ with urllib.request.urlopen(request) as response:
     html = response.read().decode("utf-8")
 
 
-matches = re.findall(r'completion_day_level.*', html)
-print("Matches:", len(matches))
 
-for line in html.splitlines():
-    if "day" in line.lower() or "star" in line.lower():
-        print(line)
+POLAND = ZoneInfo("Europe/Warsaw")
+AOC_TZ = ZoneInfo("America/New_York")
+aoc_start = datetime(2025, 12, day, 0, 0, 0, tzinfo=AOC_TZ)
 
-start = html.find("<pre>")
-end = html.find("</pre>")
+completed_at = aoc_start + timedelta(
+    hours=hours,
+    minutes=minutes,
+    seconds=seconds
+)
 
-print(html[start:end + len("</pre>")])
+completed_at = completed_at.astimezone(POLAND)
