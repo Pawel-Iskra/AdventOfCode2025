@@ -1,7 +1,7 @@
 import os
 import urllib.request
 
-session = os.environ["AOC_SESSION"]
+session = os.environ["AOC_SESSION"].strip()
 
 print("Session length:", len(session))
 print("Session starts with:", session[:3])
