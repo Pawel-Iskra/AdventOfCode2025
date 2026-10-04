@@ -1,7 +1,5 @@
 import os
 import urllib.request
-import re
-
 
 year = 2025
 url = f"https://adventofcode.com/{year}/leaderboard/self"
@@ -14,17 +12,7 @@ request = urllib.request.Request(
 )
 
 with urllib.request.urlopen(request) as response:
-    html = response.read().decode("utf-8")
+    data = response.read().decode("utf-8")
 
-print(f"Downloaded {len(html)} bytes")
-
-with urllib.request.urlopen(request) as response:
-    html = response.read().decode("utf-8")
-
-print(f"Downloaded {len(html)} bytes")
-print(html[:500])
-
-matches = re.findall(r'completion_day_level.*', html)
-
-for match in matches[:5]:
-    print(match)
+print(f"Downloaded {len(data)} bytes")
+print(data[:1000])
