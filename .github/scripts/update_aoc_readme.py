@@ -20,6 +20,7 @@ request = urllib.request.Request(
 with urllib.request.urlopen(request) as response:
     html = response.read().decode("utf-8")
 
-print(f"Downloaded {len(html)} bytes")
-print("<title>Advent of Code" in html)
-print("Log In" in html)
+print("Status:", response.status)
+print("URL:", response.url)
+print("Content-Type:", response.headers.get("Content-Type"))
+print(html[:300])
