@@ -29,7 +29,7 @@ for line in html.splitlines():
     if "day" in line.lower() or "star" in line.lower():
         print(line)
 
-print("Status:", response.status)
-print("URL:", response.url)
-print("Content-Type:", response.headers.get("Content-Type"))
-print(html[:300])
+start = html.find("<pre>")
+end = html.find("</pre>")
+
+print(html[start:end + len("</pre>")])
