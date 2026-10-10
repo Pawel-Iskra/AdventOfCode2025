@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 
 
 session = os.environ["AOC_SESSION"]
-year = 2024
+year = 2025
 POLAND = ZoneInfo("Europe/Warsaw")
 AOC_TZ = ZoneInfo("America/New_York")
 url = f"https://adventofcode.com/{year}/leaderboard/self"
